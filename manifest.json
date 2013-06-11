@@ -3,5 +3,10 @@
     "version": "0.1.0",
     "manifest_version": 2,
 
-    "description": "タブの切り替えを考えなくてもいいように、自動キューイングします。"
+    "description": "タブの切り替えを考えなくてもいいように、自動キューイングします。",
+
+    "permissions": [
+        "tabs"
+    ],
+    "background_page": "background.html"
 }
