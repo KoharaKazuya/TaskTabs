@@ -8,5 +8,7 @@
     "permissions": [
         "tabs"
     ],
-    "background_page": "background.html"
+    "background": {
+        "scripts": ["tasktabs.js"]
+    }
 }
