@@ -9,6 +9,6 @@
         "tabs"
     ],
     "background": {
-        "scripts": ["tasktabs.js"]
+        "scripts": ["tasktabs.js", "tree.js"]
     }
 }
