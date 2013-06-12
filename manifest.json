@@ -1,0 +1,31 @@
+{
+    "name": "TaskTabs",
+    "version": "0.1.0",
+    "manifest_version": 2,
+
+    "description": "タブの切り替えを考えなくてもいいように、自動キューイングします。",
+
+    "permissions": [
+        "tabs"
+    ],
+    "background": {
+        "scripts": ["tasktabs.js", "tree.js"]
+    },
+    "browser_action": {
+        "default_popup": "popup.html"
+    },
+    "commands": {
+        "addTask": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+X"
+            },
+            "description": "add a new TaskTab"
+        },
+        "later": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+Z"
+            },
+            "description": "do the current TaskTab later"
+        }
+    }
+}
