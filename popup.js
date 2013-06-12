@@ -1,9 +1,8 @@
 window.addEventListener('load', function() {
 
-document.getElementById("new_task").addEventListener('click', new_task, false);
+var bg = chrome.extension.getBackgroundPage();
 
-function new_task() {
-    chrome.extension.getBackgroundPage().add_task();
-}
+document.getElementById("new_task").addEventListener('click', bg.add_task, false);
+document.getElementById("later").addEventListener('click', bg.later, false);
 
 }, false);
