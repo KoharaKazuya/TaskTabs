@@ -1,7 +1,12 @@
 function Tree(tab) {
     this.node = tab;
     this.children = [];
+    this.ghost = !tab;
 }
+
+Tree.prototype.destroy = function() {
+    this.parent.removeChild(this);
+};
 
 Tree.prototype.addChild = function(child) {
     child.parent = this;
@@ -13,16 +18,20 @@ Tree.prototype.addChild = function(child) {
 };
 
 Tree.prototype.removeChild = function(child) {
-    var targetIndex;
-    for (var i = 0; i < this.children.length; ++i) {
-        if (child.node.id === this.children[i].node.id) {
-            targetIndex = i;
+    if (child.children.length > 0) {
+        var targetIndex;
+        for (var i = 0; i < this.children.length; ++i) {
+            if (child.node.id === this.children[i].node.id) {
+                targetIndex = i;
+            }
         }
+        if (targetIndex > 0) {
+            this.children[targetIndex-1].brother = child.brother;
+        }
+        this.children.splice(targetIndex, 1);
+    } else {
+        child.setGhost();
     }
-    if (targetIndex > 0) {
-        this.children[targetIndex-1].brother = child.brother;
-    }
-    this.children.splice(targetIndex, 1);
 };
 
 /**
@@ -47,4 +56,30 @@ Tree.prototype.has = function(tab) {
  */
 Tree.prototype.isLeaf = function() {
     return this.children.length === 0;
+};
+
+/**
+ * ゴースト化
+ * 子要素の関係性を保持したまま、閉じようとした時に
+ */
+Tree.prototype.setGhost = function() {
+    this.ghost = true;
+};
+
+/**
+ * ゴースト状態か？
+ */
+Tree.prototype.isGhost = function() {
+    return this.ghost;
+};
+
+/**
+ * 自身と子孫要素全てを配列に格納して返す
+ */
+Tree.prototype.flatten = function() {
+    var f = [this];
+    for (var i = 0; i < this.children.length; ++i) {
+        f = f.concat(this.children[i].flatten());
+    }
+    return f;
 };

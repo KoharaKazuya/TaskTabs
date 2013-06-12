@@ -1,5 +1,7 @@
 var trees = [];
 
+chrome.tabs.onRemoved.addListener(destroy_closed_trees);
+
 /**
  * 現在のタスクから新しくタスクを生成する
  */
@@ -27,6 +29,42 @@ function search_and_add(parent, child) {
         trees.push(new Tree(child));
         // alert("add root");
     }
+}
+
+/**
+ * trees から既に閉じられたタブをもつ木を削除
+ */
+function destroy_closed_trees() {
+    chrome.tabs.query({}, function(tabs) {
+        // trees に記録されている Tree オブジェクトを全列挙
+        var flatten = [];
+        for (var i = 0; i < trees.length; ++i) {
+            flatten = flatten.concat(trees[i].flatten());
+        }
+        // tabs から検索し、なければ削除
+        for (var j = 0; j < flatten.length; ++j) {
+            var tree = flatten[j];
+            var found = false;
+            for (var k = 0; k < tabs.length; ++k) {
+                if (tabs[k].id === tree.node.id) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                if (tree.parent) {
+                    tree.destroy();
+                } else {
+                    for (var l = 0; l < trees.length; ++l) {
+                        if (trees[l].node.id === tree.node.id) {
+                            trees.splice(l, 1);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    });
 }
 
 /**
