@@ -4,10 +4,7 @@ var trees = [];
  * 現在のタスクから新しくタスクを生成する
  */
 function add_task() {
-    chrome.tabs.query({
-        windowId: chrome.windows.WINDOW_ID_CURRENT,
-        active: true
-    }, function(tabs) {
+    getCurrentTab(function(tabs) {
         var current = tabs[0];
         chrome.tabs.create({
             active: false
@@ -44,4 +41,14 @@ function search(node) {
         if (t) { return t; }
     }
     return null;
+}
+
+/**
+ * 現在のタブを取得する
+ */
+function getCurrentTab(func) {
+    chrome.tabs.query({
+        windowId: chrome.windows.WINDOW_ID_CURRENT,
+        active: true
+    }, func);
 }
