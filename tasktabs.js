@@ -1,6 +1,7 @@
 var trees = [];
 
 chrome.tabs.onRemoved.addListener(destroy_closed_trees);
+chrome.commands.onCommand.addListener(execute_command);
 
 /**
  * 現在のタスクから新しくタスクを生成する
@@ -120,4 +121,18 @@ function getCurrentTab(func) {
     }, function(tabs) {
         func(tabs[0]);
     });
+}
+
+/**
+ * コマンドを実行する
+ */
+function execute_command(command) {
+    switch (command) {
+        case "addTask":
+            add_task();
+            break;
+        case "later":
+            later();
+            break;
+    }
 }

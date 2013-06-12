@@ -13,5 +13,19 @@
     },
     "browser_action": {
         "default_popup": "popup.html"
+    },
+    "commands": {
+        "addTask": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+X"
+            },
+            "description": "add a new TaskTab"
+        },
+        "later": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+Z"
+            },
+            "description": "do the current TaskTab later"
+        }
     }
 }
