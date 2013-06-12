@@ -8,7 +8,7 @@ Tree.prototype.addChild = function(child) {
 };
 
 Tree.prototype.has = function(node) {
-    if (this.node === node) {
+    if (this.node.id === node.id) {
         return this;
     } else {
         for (var i = 0; i < this.children.length; ++i) {

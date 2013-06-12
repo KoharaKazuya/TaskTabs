@@ -10,5 +10,8 @@
     ],
     "background": {
         "scripts": ["tasktabs.js", "tree.js"]
+    },
+    "browser_action": {
+        "default_popup": "popup.html"
     }
 }

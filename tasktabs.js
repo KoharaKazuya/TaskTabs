@@ -4,7 +4,11 @@ var trees = [];
  * 現在のタスクから新しくタスクを生成する
  */
 function add_task() {
-    chrome.tabs.getCurrent(function(current) {
+    chrome.tabs.query({
+        windowId: chrome.windows.WINDOW_ID_CURRENT,
+        active: true
+    }, function(tabs) {
+        var current = tabs[0];
         chrome.tabs.create({
             active: false
         }, function(newTab) {
@@ -18,14 +22,14 @@ function add_task() {
  * 親がなければ trees にツリールートとして追加
  */
 function search_and_add(parent, child) {
-    alert("" + parent.title + "," + child.title);
+    // alert("" + parent.title + "," + child.title);
     var t = search(parent);
     if (t) {
         t.addChild(child);
-        alert("add:" + parent + "->" + child);
+        // alert("add:" + parent.title + "->" + child.title);
     } else {
         trees.push(new Tree(child));
-        alert("add root");
+        // alert("add root");
     }
 }
 
