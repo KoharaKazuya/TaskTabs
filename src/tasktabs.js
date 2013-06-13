@@ -10,7 +10,7 @@ chrome.tabs.onRemoved.addListener(destroy_closed_trees);
 chrome.commands.onCommand.addListener(execute_command);
 
 /**
- * 現在のタスクから新しくタスクを生成する
+ * 新規で新しくタスクを生成する
  */
 function newTask() {
     chrome.tabs.create({
@@ -19,6 +19,14 @@ function newTask() {
         newTaskLock[tab] = true;
         registerTabAsNewTask(tab);
     });
+}
+
+/**
+ * 現在のタブを新しいタスクとして root に登録する
+ */
+function startTask() {
+    waitForLock();
+    registerTabAsNewTask(currentTab);
 }
 
 /**
@@ -158,6 +166,9 @@ function execute_command(command) {
     switch (command) {
         case "newTask":
             newTask();
+            break;
+        case "startTask":
+            startTask();
             break;
         case "later":
             later();

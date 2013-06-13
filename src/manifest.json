@@ -21,6 +21,12 @@
             },
             "description": "add a new TaskTab"
         },
+        "startTask": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+C"
+            },
+            "description": "register current tab as a TaskTab"
+        },
         "later": {
             "suggested_key": {
                 "default": "Ctrl+Shift+Z"
