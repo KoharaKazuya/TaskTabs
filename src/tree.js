@@ -18,7 +18,7 @@ Tree.prototype.addChild = function(child) {
 };
 
 Tree.prototype.removeChild = function(child) {
-    if (child.children.length > 0) {
+    if (child.children.length === 0) {
         var targetIndex;
         for (var i = 0; i < this.children.length; ++i) {
             if (child.node.id === this.children[i].node.id) {
