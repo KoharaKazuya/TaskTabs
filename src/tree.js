@@ -73,7 +73,7 @@ Tree.prototype.has = function(tab) {
  * 子要素を持たないか
  */
 Tree.prototype.isLeaf = function() {
-    return this.getChildren().length === 0;
+    return !this.child;
 };
 
 /**
