@@ -67,7 +67,7 @@ function destroy_closed_trees() {
                     tree.destroy();
                 } else {
                     for (var l = 0; l < trees.length; ++l) {
-                        if (trees[l].node.id === tree.node.id) {
+                        if (trees[l].equals(tree)) {
                             trees.splice(l, 1);
                             break;
                         }

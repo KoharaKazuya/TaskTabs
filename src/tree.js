@@ -2,6 +2,20 @@ function Tree(tab) {
     this.node = tab;
 }
 
+Tree.prototype.equals = function(obj) {
+    if (obj) {
+        if (obj.node === undefined && this.node === undefined) {
+            return true;
+        } else if (obj.node === undefined || this.node === undefined) {
+            return false;
+        } else {
+            return obj.node.id === this.node.id;
+        }
+    } else {
+        return false;
+    }
+};
+
 Tree.prototype.destroy = function() {
     if (this.parent) {
         var children = this.getChildren();
@@ -11,13 +25,13 @@ Tree.prototype.destroy = function() {
             children[i].parent = this.parent;
         }
 
-        if (this.parent.child.node.id === this.node.id) {
+        if (this.equals(this.parent.child)) {
             // 自身の親の長男は、自身から自身の長男になる
             this.parent.child = this.child;
         } else {
             // 自身の兄の弟は、自身から自身の弟になる
             var bigBrother = this.parent.child;
-            while (bigBrother.brother.node.id === this.node.id) {
+            while (this.equals(bigBrother.brother)) {
                 bigBrother = bigBrother.brother;
             }
             bigBrother.brother = this.brother;
