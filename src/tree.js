@@ -70,7 +70,7 @@ Tree.prototype.addChild = function(tree) {
  * 持つ場合はその Tree オブジェクトを返す
  */
 Tree.prototype.has = function(tab) {
-    if (this.node.id === tab.id) {
+    if (this.equals(new Tree(tab))) {
         return this;
     } else {
         var children = this.getChildren();

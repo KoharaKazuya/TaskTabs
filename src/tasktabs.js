@@ -74,7 +74,7 @@ function destroy_closed_trees() {
             var tree = flatten[j];
             var found = false;
             for (var k = 0; k < tabs.length; ++k) {
-                if (tabs[k].id === tree.node.id) {
+                if (tree.equals(new Tree(tabs[k]))) {
                     found = true;
                     break;
                 }
