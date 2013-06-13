@@ -1,4 +1,4 @@
-var trees = [];
+var root = new Tree(undefined);
 var lock = {};
 var newTaskLock = false;
 var currentTab;
@@ -40,13 +40,13 @@ function registerTabAsNewTask(tab) {
         if (tree) {
             tree.destroy();
         }
-        trees.push(new Tree(tab));
+        root.addChild(new Tree(tab));
     }
 }
 
 /**
- * trees から親となるタブを探しだして、その子として追加
- * 親がなければ trees にツリールートとして追加
+ * root から親となるタブを探しだして、その子として追加
+ * 親がなければ root にツリールートとして追加
  */
 function search_and_add(parent, child) {
     if (child) {
@@ -56,22 +56,19 @@ function search_and_add(parent, child) {
             t.addChild(new Tree(child));
             // alert("add:" + parent.title + "->" + child.title);
         } else {
-            trees.push(new Tree(child));
+            root.addChild(new Tree(child));
             // alert("add root");
         }
     }
 }
 
 /**
- * trees から既に閉じられたタブをもつ木を削除
+ * root から既に閉じられたタブをもつ木を削除
  */
 function destroy_closed_trees() {
     chrome.tabs.query({}, function(tabs) {
-        // trees に記録されている Tree オブジェクトを全列挙
-        var flatten = [];
-        for (var i = 0; i < trees.length; ++i) {
-            flatten = flatten.concat(trees[i].flatten());
-        }
+        // root に記録されている Tree オブジェクトを全列挙
+        var flatten = root.flatten();
         // tabs から検索し、なければ削除
         for (var j = 0; j < flatten.length; ++j) {
             var tree = flatten[j];
@@ -83,32 +80,19 @@ function destroy_closed_trees() {
                 }
             }
             if (!found) {
-                if (tree.parent) {
-                    tree.destroy();
-                } else {
-                    for (var l = 0; l < trees.length; ++l) {
-                        if (trees[l].equals(tree)) {
-                            trees.splice(l, 1);
-                            break;
-                        }
-                    }
-                }
+                tree.destroy();
             }
         }
     });
 }
 
 /**
- * trees からタブを指定して検索
+ * toot からタブを指定して検索
  * @return 見つかれば Tree, 見つからなければ null
  */
 function search(tab) {
     if (tab) {
-        for (var i = 0; i < trees.length; ++i) {
-            var tree = trees[i];
-            var t = tree.has(tab);
-            if (t) { return t; }
-        }
+        return root.has(tab);
     }
     return null;
 }
