@@ -73,7 +73,7 @@ Tree.prototype.has = function(tab) {
     if (this.node.id === tab.id) {
         return this;
     } else {
-        var children = this.getChildren()
+        var children = this.getChildren();
         for (var i = 0; i < children.length; ++i) {
             var child = children[i];
             var t = child.has(tab);
