@@ -114,12 +114,6 @@ function later() {
             target = tree.getChildren()[0];
         }
         chrome.tabs.update(target.node.id, {active: true});
-
-        // 今までのタブを末っ子にする
-        if (tree.parent && tree.isLeaf()) {
-            tree.destroy();
-            tree.parent.addChild(new Tree(tab));
-        }
     }
 }
 
