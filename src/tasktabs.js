@@ -1,5 +1,6 @@
 var trees = [];
-var lock = false;
+var lock = {};
+var newTaskLock = false;
 var currentTab;
 var previousTab;
 
@@ -11,9 +12,12 @@ chrome.commands.onCommand.addListener(execute_command);
 /**
  * 現在のタスクから新しくタスクを生成する
  */
-function add_task() {
+function newTask() {
     chrome.tabs.create({
-        active: false
+        active: true
+    }, function(tab) {
+        newTaskLock[tab] = true;
+        registerTabAsNewTask(tab);
     });
 }
 
@@ -22,6 +26,22 @@ function add_task() {
  */
 function registerCreatedTask(newTab) {
     search_and_add(searchParentTab(newTab), newTab);
+    newTaskLock[newTab] = false;
+}
+
+/**
+ * 指定したタブをあらなたなタスク（親のないタスク）として登録
+ */
+function registerTabAsNewTask(tab) {
+    if (newTaskLock[tab]) {
+        setTimeout(function() { registerTabAsNewTask(tab); }, 100);
+    } else {
+        var tree = search(tab);
+        if (tree) {
+            tree.destroy();
+        }
+        trees.push(new Tree(tab));
+    }
 }
 
 /**
@@ -152,8 +172,8 @@ function setCurrentTab() {
  */
 function execute_command(command) {
     switch (command) {
-        case "addTask":
-            add_task();
+        case "newTask":
+            newTask();
             break;
         case "later":
             later();

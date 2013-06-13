@@ -15,7 +15,7 @@
         "default_popup": "popup.html"
     },
     "commands": {
-        "addTask": {
+        "newTask": {
             "suggested_key": {
                 "default": "Ctrl+Shift+X"
             },
