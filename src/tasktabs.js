@@ -156,6 +156,9 @@ function setCurrentTab() {
         previousTab = currentTab;
         currentTab = tabs[0];
         lock = false;
+        if (!search(currentTab)) {
+            registerTabAsNewTask(currentTab);
+        }
     });
 }
 
