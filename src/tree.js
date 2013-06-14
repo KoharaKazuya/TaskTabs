@@ -16,6 +16,31 @@ Tree.prototype.equals = function(obj) {
     }
 };
 
+Tree.prototype.toString = function() {
+    var str = "";
+
+    if (this.node) {
+        str += this.node.title;
+    } else {
+        str += "Blank";
+    }
+
+    var children = this.getChildren();
+    for (var i = 0; i < children.length; ++i) {
+        var child = children[i];
+        var childStr = child.toString();
+        if (i != children.length-1) {
+            childStr = childStr.replace(/^/mg, "│");
+            childStr = childStr.replace(/^│/, "├");
+        } else {
+            childStr = childStr.replace(/^/mg, "　");
+            childStr = childStr.replace(/^　/, "└");
+        }
+        str += "\n" + childStr;
+    }
+    return str;
+};
+
 Tree.prototype.destroy = function() {
     if (this.parent) {
         var children = this.getChildren();
