@@ -26,8 +26,13 @@ Tree.prototype.destroy = function() {
         }
 
         if (this.equals(this.parent.child)) {
-            // 自身の親の長男は、自身から自身の長男になる
-            this.parent.child = this.child;
+            if (this.child) {
+                // 自身の親の長男は、自身から自身の長男になる
+                this.parent.child = this.child;
+            } else {
+                // 自身の親の長男は、自身の弟になる
+                this.parent.child = this.brother;
+            }
         } else {
             // 自身の兄の弟は、自身から自身の弟になる
             var bigBrother = this.parent.child;
