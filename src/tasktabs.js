@@ -125,6 +125,9 @@ function later() {
         } else {
             target = tree.getChildren()[0];
         }
+        if (root.equals(target)) {
+            target = root.getChildren()[0];
+        }
         chrome.tabs.update(target.node.id, {active: true});
     }
 }
