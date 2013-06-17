@@ -1,5 +1,4 @@
 var root = new Tree(undefined);
-var lock = {};
 var newTaskLock = false;
 var currentTab;
 var previousTab;
@@ -25,7 +24,6 @@ function newTask() {
  * 現在のタブを新しいタスクとして root に登録する
  */
 function startTask() {
-    waitForLock();
     registerTabAsNewTask(currentTab);
 }
 
@@ -109,7 +107,6 @@ function search(tab) {
  * 現在のタブを後回しにする
  */
 function later() {
-    waitForLock();
     var tab = currentTab;
     var tree = search(tab);
     if (tree) {
@@ -136,29 +133,23 @@ function later() {
  * 生成元となった親タブを取得する
  */
 function searchParentTab(tab) {
-    waitForLock();
-    lock = true;
     if (!currentTab || tab.id === currentTab.id) {
         return previousTab;
     } else {
         return currentTab;
     }
-    lock = false;
 }
 
 /**
  * 現在のタブを設定する
  */
 function setCurrentTab() {
-    waitForLock();
-    lock = true;
     chrome.tabs.query({
         windowId: chrome.windows.WINDOW_ID_CURRENT,
         active: true
     }, function(tabs) {
         previousTab = currentTab;
         currentTab = tabs[0];
-        lock = false;
         if (!search(currentTab)) {
             registerTabAsNewTask(currentTab);
         }
@@ -179,14 +170,5 @@ function execute_command(command) {
         case "later":
             later();
             break;
-    }
-}
-
-/**
- * ロックが解除されるまで待機
- */
-function waitForLock() {
-    if (lock) {
-        setTimeout(waitForLock, 100);
     }
 }
