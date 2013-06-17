@@ -74,6 +74,19 @@ Tree.prototype.destroy = function() {
     }
 };
 
+Tree.prototype.update = function() {
+    if (this.node) {
+        var _this = this;
+        chrome.tabs.get(this.node.id, function(tab) {
+            _this.node = tab;
+        });
+    }
+    var children = this.getChildren();
+    for (var i = 0; i < children.length; ++i) {
+        children[i].update();
+    }
+};
+
 Tree.prototype.getChildren = function() {
     var children = [];
     var child = this.child;
