@@ -5,8 +5,16 @@ var previousTab;
 
 chrome.tabs.onActivated.addListener(setCurrentTab);
 chrome.tabs.onCreated.addListener(registerCreatedTask);
-chrome.tabs.onRemoved.addListener(destroy_closed_trees);
+chrome.tabs.onRemoved.addListener(onRemoved);
 chrome.commands.onCommand.addListener(execute_command);
+
+function onRemoved(tabId, removeInfo) {
+    var removedTree = search({id: tabId});
+    if (removedTree.equals(new Tree(currentTab))) {
+        laterTree(removedTree);
+    }
+    destroy_closed_trees();
+}
 
 /**
  * 新規で新しくタスクを生成する
@@ -107,10 +115,14 @@ function search(tab) {
  * 現在のタブを後回しにする
  */
 function later() {
-    var tab = currentTab;
-    var tree = search(tab);
-    if (tree) {
+    laterTree(search(currentTab));
+}
 
+/**
+ * 指定したタブを後回しにする
+ */
+function laterTree(tree) {
+    if (tree) {
         // タブが木なら子要素へ、葉なら弟、または親へタブのアクティブを移動
         var target;
         if (tree.isLeaf()) {
