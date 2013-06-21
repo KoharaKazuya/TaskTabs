@@ -1,5 +1,4 @@
 var root = new Tree(undefined);
-var newTaskLock = false;
 var currentTab;
 var previousTab;
 
@@ -23,7 +22,6 @@ function newTask() {
     chrome.tabs.create({
         active: true
     }, function(tab) {
-        newTaskLock[tab] = true;
         registerTabAsNewTask(tab);
     });
 }
@@ -40,22 +38,17 @@ function startTask() {
  */
 function registerCreatedTask(newTab) {
     search_and_add(searchParentTab(newTab), newTab);
-    newTaskLock[newTab] = false;
 }
 
 /**
  * 指定したタブをあらなたなタスク（親のないタスク）として登録
  */
 function registerTabAsNewTask(tab) {
-    if (newTaskLock[tab]) {
-        setTimeout(function() { registerTabAsNewTask(tab); }, 100);
-    } else {
-        var tree = search(tab);
-        if (tree) {
-            tree.destroy();
-        }
-        root.addChild(new Tree(tab));
+    var tree = search(tab);
+    if (tree) {
+        tree.destroy();
     }
+    root.addChild(new Tree(tab));
 }
 
 /**
