@@ -1,28 +1,44 @@
-function Tree(tab) {
-    this.node = tab;
+function Tree(type, node) {
+    this.type = type;
+    this.node = node;
 }
 
 Tree.prototype.equals = function(obj) {
-    if (obj) {
-        if (obj.node === undefined && this.node === undefined) {
-            return true;
-        } else if (obj.node === undefined || this.node === undefined) {
-            return false;
-        } else {
-            return obj.node.id === this.node.id;
+    if (obj && obj.type === this.type) {
+        switch (this.type) {
+            case "root":
+            case "window":
+                return obj.node === this.node;
+            case "tab":
+                if (obj.node === undefined && this.node === undefined) {
+                    return true;
+                } else if (obj.node === undefined || this.node === undefined) {
+                    return false;
+                } else {
+                    return obj.node.id === this.node.id;
+                }
         }
-    } else {
-        return false;
     }
+    return false;
 };
 
 Tree.prototype.toString = function() {
     var str = "";
 
-    if (this.node) {
-        str += this.node.title;
-    } else {
-        str += "Blank";
+    switch (this.type) {
+        case "root":
+            str += "==========";
+            break;
+        case "window":
+            str += "----------";
+            break;
+        case "tab":
+            if (this.node) {
+                str += this.node.title;
+            } else {
+                str += "Blank";
+            }
+            break;
     }
 
     var children = this.getChildren();
@@ -75,7 +91,7 @@ Tree.prototype.destroy = function() {
 };
 
 Tree.prototype.update = function() {
-    if (this.node) {
+    if (this.type === "tab" && this.node) {
         var _this = this;
         chrome.tabs.get(this.node.id, function(tab) {
             _this.node = tab;
@@ -112,14 +128,14 @@ Tree.prototype.addChild = function(tree) {
  * このノードまたは子孫に要素を持つか
  * 持つ場合はその Tree オブジェクトを返す
  */
-Tree.prototype.has = function(tab) {
-    if (this.equals(new Tree(tab))) {
+Tree.prototype.has = function(type, node) {
+    if (this.equals(new Tree(type, node))) {
         return this;
     } else {
         var children = this.getChildren();
         for (var i = 0; i < children.length; ++i) {
             var child = children[i];
-            var t = child.has(tab);
+            var t = child.has(type, node);
             if (t) { return t; }
         }
         return null;

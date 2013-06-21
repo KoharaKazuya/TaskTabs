@@ -1,4 +1,4 @@
-var root = new Tree(undefined);
+var root = new Tree("root", undefined);
 var currentTab;
 var previousTab;
 
@@ -9,7 +9,7 @@ chrome.commands.onCommand.addListener(execute_command);
 
 function onRemoved(tabId, removeInfo) {
     var removedTree = search({id: tabId});
-    if (removedTree.equals(new Tree(currentTab))) {
+    if (removedTree.equals(new Tree("tab", currentTab))) {
         laterTree(removedTree);
     }
     destroy_closed_trees();
@@ -48,7 +48,7 @@ function registerTabAsNewTask(tab) {
     if (tree) {
         tree.destroy();
     }
-    root.addChild(new Tree(tab));
+    root.addChild(new Tree("tab", tab));
 }
 
 /**
@@ -59,13 +59,8 @@ function search_and_add(parent, child) {
     if (child) {
         // alert("" + parent.title + "," + child.title);
         var t = search(parent);
-        if (t) {
-            t.addChild(new Tree(child));
-            // alert("add:" + parent.title + "->" + child.title);
-        } else {
-            root.addChild(new Tree(child));
-            // alert("add root");
-        }
+        var parentTree = t ? t : root;
+        parentTree.addChild(new Tree("tab", child));
     }
 }
 
@@ -81,7 +76,7 @@ function destroy_closed_trees() {
             var tree = flatten[j];
             var found = false;
             for (var k = 0; k < tabs.length; ++k) {
-                if (tree.equals(new Tree(tabs[k]))) {
+                if (tree.equals(new Tree("tab", tabs[k]))) {
                     found = true;
                     break;
                 }
@@ -99,7 +94,7 @@ function destroy_closed_trees() {
  */
 function search(tab) {
     if (tab) {
-        return root.has(tab);
+        return root.has("tab", tab);
     }
     return null;
 }
