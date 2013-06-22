@@ -62,6 +62,7 @@ function registerTabAsNewTask(tab) {
  */
 function refresh() {
     destroy_closed_trees();
+    register_opened_tabs();
 }
 
 /**
@@ -76,6 +77,20 @@ function search_and_add(parent, child) {
         }
         parentTree.addChild(new Tree("tab", child));
     }
+}
+
+/**
+ * 開かれているが、ツリーに登録されていない全てのタブを登録する
+ */
+function register_opened_tabs() {
+    chrome.tabs.query({}, function(tabs) {
+        for (var i = 0; i < tabs.length; ++i) {
+            var tab = tabs[i];
+            if (!search(tab)) {
+                registerTabAsNewTask(tab);
+            }
+        }
+    })
 }
 
 /**
@@ -178,9 +193,6 @@ function setCurrentTab() {
     }, function(tabs) {
         previousTab = currentTab;
         currentTab = tabs[0];
-        if (!search(currentTab)) {
-            registerTabAsNewTask(currentTab);
-        }
     });
 }
 
