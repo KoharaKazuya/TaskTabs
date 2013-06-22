@@ -1,6 +1,5 @@
 var root = new Tree("root", undefined);
-var currentTab;
-var previousTab;
+var tabStack = [];
 
 chrome.tabs.onActivated.addListener(onActivated);
 chrome.tabs.onCreated.addListener(registerCreatedTask);
@@ -14,7 +13,7 @@ function onActivated() {
 
 function onRemoved(tabId, removeInfo) {
     var removedTree = search({id: tabId});
-    if (removedTree && removedTree.equals(new Tree("tab", currentTab))) {
+    if (removedTree && removedTree.equals(new Tree("tab", getCurrentTab()))) {
         laterTree(removedTree);
     }
     refresh();
@@ -35,7 +34,7 @@ function newTask() {
  * 現在のタブを新しいタスクとして root に登録する
  */
 function startTask() {
-    registerTabAsNewTask(currentTab);
+    registerTabAsNewTask(getCurrentTab());
 }
 
 /**
@@ -146,7 +145,7 @@ function getWindowTree(id) {
  * 現在のタブを後回しにする
  */
 function later() {
-    laterTree(search(currentTab));
+    laterTree(search(getCurrentTab()));
 }
 
 /**
@@ -173,13 +172,24 @@ function laterTree(tree) {
 }
 
 /**
+ * 以前に選んでいたタブに移動
+ */
+function activatePreviousTab() {
+    if (tabStack.length > 1) {
+        popTabStack();
+        var tab = getCurrentTab();
+        chrome.tabs.update(tab.id, {active: true});
+    }
+}
+
+/**
  * 生成元となった親タブを取得する
  */
 function searchParentTab(tab) {
-    if (!currentTab || tab.id === currentTab.id) {
-        return previousTab;
+    if (!getCurrentTab() || tab.id === getCurrentTab().id) {
+        return getPreviousTab();
     } else {
-        return currentTab;
+        return getCurrentTab();
     }
 }
 
@@ -191,9 +201,47 @@ function setCurrentTab() {
         windowId: chrome.windows.WINDOW_ID_CURRENT,
         active: true
     }, function(tabs) {
-        previousTab = currentTab;
-        currentTab = tabs[0];
+        pushTabStack(tabs[0]);
     });
+}
+
+function getCurrentTab() {
+    if (tabStack.length > 0) {
+        return tabStack[tabStack.length - 1];
+    } else {
+        return null;
+    }
+}
+
+function getPreviousTab() {
+    if (tabStack.length > 1) {
+        return tabStack[tabStack.length - 2];
+    } else {
+        return null;
+    }
+}
+
+
+function pushTabStack(tab) {
+    /**
+     * tabStack に既に tab が含まれていた場合は破棄する
+     */
+    function compact() {
+        for (var i = 0; i < tabStack.length; ++i) {
+            if (tabStack[i].id === tab.id) {
+                tabStack.splice(i, 1);
+                compact();
+                break;
+            }
+        }
+    }
+
+    compact();
+    tabStack.push(tab);
+}
+
+function popTabStack() {
+    tabStack.pop();
 }
 
 /**
@@ -209,6 +257,9 @@ function execute_command(command) {
             break;
         case "later":
             later();
+            break;
+        case "previousTab":
+            activatePreviousTab();
             break;
     }
 }

@@ -32,6 +32,12 @@
                 "default": "Ctrl+Shift+Z"
             },
             "description": "do the current TaskTab later"
+        },
+        "previousTab": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+A"
+            },
+            "description": "select previous tab"
         }
     }
 }
