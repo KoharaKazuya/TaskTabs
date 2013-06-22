@@ -2,17 +2,22 @@ var root = new Tree("root", undefined);
 var currentTab;
 var previousTab;
 
-chrome.tabs.onActivated.addListener(setCurrentTab);
+chrome.tabs.onActivated.addListener(onActivated);
 chrome.tabs.onCreated.addListener(registerCreatedTask);
 chrome.tabs.onRemoved.addListener(onRemoved);
 chrome.commands.onCommand.addListener(execute_command);
+
+function onActivated() {
+    refresh();
+    setCurrentTab();
+}
 
 function onRemoved(tabId, removeInfo) {
     var removedTree = search({id: tabId});
     if (removedTree && removedTree.equals(new Tree("tab", currentTab))) {
         laterTree(removedTree);
     }
-    destroy_closed_trees();
+    refresh();
 }
 
 /**
@@ -52,6 +57,15 @@ function registerTabAsNewTask(tab) {
 }
 
 /**
+ * 状態を正しく保つ
+ * 任意のタイミングで呼べる
+ */
+function refresh() {
+    destroy_closed_trees();
+    register_opened_tabs();
+}
+
+/**
  * root から親となるタブを探しだして、その子として追加
  * 親がなければ root にツリールートとして追加
  */
@@ -63,6 +77,20 @@ function search_and_add(parent, child) {
         }
         parentTree.addChild(new Tree("tab", child));
     }
+}
+
+/**
+ * 開かれているが、ツリーに登録されていない全てのタブを登録する
+ */
+function register_opened_tabs() {
+    chrome.tabs.query({}, function(tabs) {
+        for (var i = 0; i < tabs.length; ++i) {
+            var tab = tabs[i];
+            if (!search(tab)) {
+                registerTabAsNewTask(tab);
+            }
+        }
+    })
 }
 
 /**
@@ -165,9 +193,6 @@ function setCurrentTab() {
     }, function(tabs) {
         previousTab = currentTab;
         currentTab = tabs[0];
-        if (!search(currentTab)) {
-            registerTabAsNewTask(currentTab);
-        }
     });
 }
 
