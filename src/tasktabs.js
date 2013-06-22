@@ -2,17 +2,22 @@ var root = new Tree("root", undefined);
 var currentTab;
 var previousTab;
 
-chrome.tabs.onActivated.addListener(setCurrentTab);
+chrome.tabs.onActivated.addListener(onActivated);
 chrome.tabs.onCreated.addListener(registerCreatedTask);
 chrome.tabs.onRemoved.addListener(onRemoved);
 chrome.commands.onCommand.addListener(execute_command);
+
+function onActivated() {
+    refresh();
+    setCurrentTab();
+}
 
 function onRemoved(tabId, removeInfo) {
     var removedTree = search({id: tabId});
     if (removedTree && removedTree.equals(new Tree("tab", currentTab))) {
         laterTree(removedTree);
     }
-    destroy_closed_trees();
+    refresh();
 }
 
 /**
@@ -49,6 +54,14 @@ function registerTabAsNewTask(tab) {
         tree.destroy();
     }
     search_and_add(null, tab);
+}
+
+/**
+ * 状態を正しく保つ
+ * 任意のタイミングで呼べる
+ */
+function refresh() {
+    destroy_closed_trees();
 }
 
 /**
