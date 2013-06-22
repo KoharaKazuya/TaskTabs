@@ -212,6 +212,20 @@ function getPreviousTab() {
 
 
 function pushTabStack(tab) {
+    /**
+     * tabStack に既に tab が含まれていた場合は破棄する
+     */
+    function compact() {
+        for (var i = 0; i < tabStack.length; ++i) {
+            if (tabStack[i].id === tab.id) {
+                tabStack.splice(i, 1);
+                compact();
+                break;
+            }
+        }
+    }
+
+    compact();
     tabStack.push(tab);
 }
 
