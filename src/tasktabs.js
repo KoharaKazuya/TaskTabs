@@ -172,6 +172,17 @@ function laterTree(tree) {
 }
 
 /**
+ * 以前に選んでいたタブに移動
+ */
+function activatePreviousTab() {
+    if (tabStack.length > 1) {
+        popTabStack();
+        var tab = getCurrentTab();
+        chrome.tabs.update(tab.id, {active: true});
+    }
+}
+
+/**
  * 生成元となった親タブを取得する
  */
 function searchParentTab(tab) {
@@ -229,6 +240,10 @@ function pushTabStack(tab) {
     tabStack.push(tab);
 }
 
+function popTabStack() {
+    tabStack.pop();
+}
+
 /**
  * コマンドを実行する
  */
@@ -242,6 +257,9 @@ function execute_command(command) {
             break;
         case "later":
             later();
+            break;
+        case "previousTab":
+            activatePreviousTab();
             break;
     }
 }
