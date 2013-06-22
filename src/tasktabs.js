@@ -9,7 +9,7 @@ chrome.commands.onCommand.addListener(execute_command);
 
 function onRemoved(tabId, removeInfo) {
     var removedTree = search({id: tabId});
-    if (removedTree.equals(new Tree("tab", currentTab))) {
+    if (removedTree && removedTree.equals(new Tree("tab", currentTab))) {
         laterTree(removedTree);
     }
     destroy_closed_trees();
@@ -48,7 +48,7 @@ function registerTabAsNewTask(tab) {
     if (tree) {
         tree.destroy();
     }
-    root.addChild(new Tree("tab", tab));
+    search_and_add(null, tab);
 }
 
 /**
@@ -57,9 +57,10 @@ function registerTabAsNewTask(tab) {
  */
 function search_and_add(parent, child) {
     if (child) {
-        // alert("" + parent.title + "," + child.title);
-        var t = search(parent);
-        var parentTree = t ? t : root;
+        var parentTree = search(parent);
+        if (!parentTree) {
+            parentTree = getWindowTree(child.windowId);
+        }
         parentTree.addChild(new Tree("tab", child));
     }
 }
@@ -74,15 +75,17 @@ function destroy_closed_trees() {
         // tabs から検索し、なければ削除
         for (var j = 0; j < flatten.length; ++j) {
             var tree = flatten[j];
-            var found = false;
-            for (var k = 0; k < tabs.length; ++k) {
-                if (tree.equals(new Tree("tab", tabs[k]))) {
-                    found = true;
-                    break;
+            if (tree.type === "tab") {
+                var found = false;
+                for (var k = 0; k < tabs.length; ++k) {
+                    if (tree.equals(new Tree("tab", tabs[k]))) {
+                        found = true;
+                        break;
+                    }
                 }
-            }
-            if (!found) {
-                tree.destroy();
+                if (!found) {
+                    tree.destroy();
+                }
             }
         }
     });
@@ -97,6 +100,18 @@ function search(tab) {
         return root.has("tab", tab);
     }
     return null;
+}
+
+/**
+ * root 直下の window ツリーを発見するか、なければ生成
+ */
+function getWindowTree(id) {
+    var t = root.has("window", id);
+    if (!t) {
+        t = new Tree("window", id);
+        root.addChild(t);
+    }
+    return t;
 }
 
 /**
@@ -122,8 +137,8 @@ function laterTree(tree) {
         } else {
             target = tree.getChildren()[0];
         }
-        if (root.equals(target)) {
-            target = root.getChildren()[0];
+        if (target.type !== "tab") {
+            target = getWindowTree(tree.node.windowId);
         }
         chrome.tabs.update(target.node.id, {active: true});
     }
