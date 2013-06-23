@@ -9,23 +9,35 @@
         "tabs"
     ],
     "background": {
-        "scripts": ["tasktabs.js", "tree.js"]
+        "scripts": ["tree.js", "tasktabs.js"]
     },
     "browser_action": {
         "default_popup": "popup.html"
     },
     "commands": {
-        "addTask": {
+        "newTask": {
             "suggested_key": {
                 "default": "Ctrl+Shift+X"
             },
             "description": "add a new TaskTab"
+        },
+        "startTask": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+C"
+            },
+            "description": "register current tab as a TaskTab"
         },
         "later": {
             "suggested_key": {
                 "default": "Ctrl+Shift+Z"
             },
             "description": "do the current TaskTab later"
+        },
+        "previousTab": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+A"
+            },
+            "description": "select previous tab"
         }
     }
 }
