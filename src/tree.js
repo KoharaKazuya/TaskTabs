@@ -34,9 +34,9 @@ Tree.prototype.toString = function() {
             break;
         case "tab":
             if (this.node) {
-                str += this.node.title;
+                str += " " + this.node.title;
             } else {
-                str += "Blank";
+                str += " Blank";
             }
             break;
     }
