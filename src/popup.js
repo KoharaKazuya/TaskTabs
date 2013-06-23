@@ -9,7 +9,7 @@ document.getElementById("previousTab").addEventListener('click', bg.activatePrev
 
 bg.root.update();
 setTimeout(function() {
-    document.getElementById("treeView").innerHTML = bg.root.toString().replace(/\n/g, "<br>");
+    document.getElementById("treeView").innerHTML = bg.root.toString().replace(/(.*)(\n|$)/g, "<nobr>$1</nobr><br>");
 }, 100);
 
 }, false);
