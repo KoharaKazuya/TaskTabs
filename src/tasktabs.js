@@ -4,6 +4,7 @@ var tabStack = [];
 chrome.tabs.onActivated.addListener(onActivated);
 chrome.tabs.onCreated.addListener(registerCreatedTask);
 chrome.tabs.onRemoved.addListener(onRemoved);
+chrome.windows.onFocusChanged.addListener(onActivated);
 chrome.commands.onCommand.addListener(execute_command);
 
 function onActivated() {
